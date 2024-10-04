@@ -2,7 +2,7 @@ apiVersion: oadp.openshift.io/v1alpha1
 kind: DataProtectionApplication
 metadata:
   name: oadp-backup
-  namespace: "namespace"
+  namespace: openshift-adp
 spec:
   backupImages: false
   backupLocations:
@@ -64,7 +64,7 @@ spec:
     excludedResources:
       - pvc
       - pv
-    storageLocation: "nome-BSL"
+    storageLocation: "oadp-backup-1"
     #Set a backup to expire. Default: 720h0m0s
     ttl: 720h00m0s
   #The way to prevent Argo deleting the backup resources is to enable the useOwnerReferencesInBackup
