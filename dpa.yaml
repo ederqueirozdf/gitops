@@ -3,9 +3,6 @@ kind: DataProtectionApplication
 metadata:
   name: oadp-backup
   namespace: "namespace"
-#annotations:
-#- key: "argocd.argoproj.io/sync-wave"
-#  value: '"1"'
 spec:
   backupImages: false
   backupLocations:
@@ -45,3 +42,32 @@ spec:
           profile: default
           region: proderj
         provider: aws
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: backup-completo-do-cluster-12h
+  namespace: "namespace"
+spec:
+  schedule: "0 */12 * * *"
+  template:
+    defaultVolumesToRestic: false
+    hooks: {}
+    includedNamespaces:
+      - '*'
+    includedResources:
+      - '*'
+    excludedNamespaces:
+      - openshift-kube-apiserver
+      - openshift-logging
+      - openshift-monitoring
+    excludedResources:
+      - pvc
+      - pv
+    storageLocation: "nome-BSL"
+    #Set a backup to expire. Default: 720h0m0s
+    ttl: 720h00m0s
+  #The way to prevent Argo deleting the backup resources is to enable the useOwnerReferencesInBackup
+  #(https://github.com/vmware-tanzu/velero/issues/4456#issuecomment-999359434)
+  #(https://github.com/vmware-tanzu/velero/issues/2975) 
+  useOwnerReferencesInBackup: true
